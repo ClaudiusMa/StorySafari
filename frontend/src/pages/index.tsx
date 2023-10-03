@@ -185,7 +185,7 @@ export default function Home() {
     // Add new sprites to group
     for (let i = 0, l = names.length; i < l; i++) {
       const sprite = createSprite(names[i]);
-      sprite.scale.set(120, 60, 1) // Increase sprite scale
+      sprite.scale.set(480, 240, 4) // Increase sprite scale
       const phi = Math.acos(-1 + (2 * i) / l)
       const theta = Math.sqrt(l * Math.PI) * phi
       sprite.position.setFromSphericalCoords(800, phi, theta)
@@ -195,28 +195,40 @@ export default function Home() {
 
   function createSprite(name: string) {
     const canvas = document.createElement('canvas')
-    canvas.width = 500
-    canvas.height = 250
     const context = canvas.getContext('2d')
+  
     if (context) {
+      context.font = `${20 * 1.3333}px Arial`
+      const metrics = context.measureText(name)
+      const textWidth = metrics.width
+      const padding = 10 // Add some padding if needed
+  
+      // Set canvas width and height
+      canvas.width = textWidth + padding * 2
+      canvas.height = 250 // Adjust height as needed
+  
       context.clearRect(0, 0, canvas.width, canvas.height)
       context.beginPath()
       context.translate(canvas.width / 2, canvas.height / 2)
       context.fillStyle = '#ffffff'
-      context.font = '62px Arial'
       context.textBaseline = 'middle'
       context.textAlign = 'start'
       context.fillText(name, 0, 0)
     }
-
+  
     const texture = new THREE.CanvasTexture(canvas)
     texture.generateMipmaps = false
     texture.minFilter = THREE.LinearFilter
     texture.magFilter = THREE.LinearFilter
-
+  
     const material = new THREE.SpriteMaterial({ map: texture })
     const sprite = new THREE.Sprite(material);
     sprite.name = name; // set the name of the sprite
+  
+    // Set sprite scale proportionally to canvas dimensions
+    const scaleRatio = 0.1; // Adjust this value to change the overall size of the sprites
+    sprite.scale.set(canvas.width * scaleRatio, canvas.height * scaleRatio, 1);
+  
     return sprite;
   }
 
