@@ -14,20 +14,36 @@ export default function Home() {
   const groupRef = useRef<THREE.Group>(new THREE.Group());
 
   const fetchPortfolio = async (companyName) => {
-    const response = await fetch('/api/call-gpt', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ companyName }),
-    });
-    const data = await response.json();
-    const newNames = data.results.map(result => result.title);
-    const newUrls = data.results.map(result => result.url);
-    setNames(newNames);
-    setUrls(newUrls);
-    console.log(newNames)
-    console.log(newUrls)
+    try {
+      const response = await fetch('/api/call-gpt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ companyName }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Server error:', errorData);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data && data.results) {
+        const newNames = data.results.map(result => result.title);
+        const newUrls = data.results.map(result => result.url);
+        setNames(newNames);
+        setUrls(newUrls);
+        console.log(newNames)
+        console.log(newUrls)
+      } else {
+        console.error('Results not found in response', data);
+      }
+    } catch (error) {
+      console.error('Fetch failed', error);
+    }
   };
 
   const handleSearch = () => {
@@ -81,8 +97,29 @@ export default function Home() {
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
+      const fontSize = 62; // the font size you're using for the canvas text
+      const textHeight = fontSize * 1.2; // estimate the text height
 
-      const intersects = raycaster.intersectObjects(groupRef.current.children);
+      // Create new objects at the world positions of the children
+      const worldChildren = groupRef.current.children.map(child => {
+        const worldChild = child.clone();
+        worldChild.position.copy(child.localToWorld(child.position.clone()));
+        worldChild.name = child.name; // copy the name
+
+        // Manually create a bounding box that fits the visible area of the sprite
+        const halfWidth = child.scale.x / 2;
+        const halfHeight = (child.scale.y + textHeight) / 2;
+        worldChild.geometry.boundingBox = new THREE.Box3(
+          new THREE.Vector3(-halfWidth, -halfHeight + textHeight / 2, -0.1),
+          new THREE.Vector3(halfWidth, halfHeight + textHeight / 2, 0.1)
+        );
+
+        return worldChild;
+      });
+
+      const intersects = raycaster.intersectObjects(worldChildren, true);
+
+      console.log(intersects)
 
       if (intersects.length > 0) {
         const index = names.indexOf(intersects[0].object.name);
@@ -96,24 +133,31 @@ export default function Home() {
 
     function onDocumentMouseMove(event) {
       event.preventDefault();
-    
+
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    
+
       raycaster.setFromCamera(mouse, camera);
-    
+
       const intersects = raycaster.intersectObjects(groupRef.current.children);
-    
+
+
       if (intersects.length > 0) {
         document.body.style.cursor = 'pointer';
       } else {
         document.body.style.cursor = 'default';
       }
     }
-    
+
     window.addEventListener('mousemove', onDocumentMouseMove, false);
 
     function render() {
+      // // Log positions inside the animation loop
+      // groupRef.current.children.forEach((child, index) => {
+      //   const worldPosition = child.localToWorld(child.position.clone());
+      //   console.log(`Child ${index} world position:`, worldPosition);
+      // });
+
       renderer.render(scene, camera)
       groupRef.current.rotateY(-0.0001)
       groupRef.current.rotateX(0.0001)
@@ -183,24 +227,34 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div>
-        <div className=' flex flex-col  bg-black'>
-          <PromptInput
-            displayBox={true}
-            prompt='Company'
-            placeholder='Enter the Company Name'
-            value={companyName}
-            onChange={(value: string) => setCompanyName(value)}
-          />
-          <Button
-            text='Search'
-            onClick={handleSearch}
-          />
+
+      <div className='flex flex-row bg-black'>
+        <div className=' flex flex-col w-1/4 ml-20 absolute self-center'>
+          <p className='text-3xl font-bold text-lightgrey'><span className='text-5xl'>S</span>torySafari</p>
+          <p className='mt-2 text-lg font-light text-lightgrey'>Discover dream company portfolios and craft compelling stories for your own</p>
+          <div className='mt-5'>
+            <div className='flex items-center p-2 w-full text-white bg-lightgrey/20 backdrop-blur-lg rounded-sm hover:bg-lightgrey/40'>
+              <p className='mx-2'>Company</p>
+              <input
+                type="text"
+                className='flex-grow text-right bg-transparent outline-none'
+                placeholder='Enter your desirable company'
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+              />
+            </div>
+            <button className='p-2 mt-2 w-full text-white bg-lightgrey/20  backdrop-blur-lg rounded-sm hover:bg-lightgrey/40' onClick={handleSearch}>Search</button>
+          </div>
+        </div>
+
+        <div className='w-3/4'>
+          <div></div>
           <div ref={containerRef} />
           {names.map((name, index) => (
             <a key={index} href={urls[index]} target="_blank" rel="noopener noreferrer">{name}</a>
           ))}
         </div>
+
       </div>
     </>
   )

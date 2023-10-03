@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { companyName } = req.body;
     const response = await metaphor.search(`Here is a portfolio of a designer who works at ${companyName}`, {
-      numResults: 30,
+      numResults: 10,
     });
 
     res.status(200).json(response);
