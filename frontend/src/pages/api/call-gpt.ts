@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import axios from "axios";
 import Metaphor from "metaphor-node"
 
 const metaphor = new Metaphor("3ffeaa1e-c0dd-4a9f-a86a-25a9dbfac823")
