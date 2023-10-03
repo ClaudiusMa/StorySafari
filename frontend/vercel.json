@@ -1,14 +1,14 @@
 {
     "builds": [
-      {
-        "src": "package.json",
-        "use": "@vercel/next"
-      }
+        {
+            "src": "package.json",
+            "use": "@vercel/next"
+        }
     ],
     "routes": [
-      {
-        "src": "/api/(.*)",
-        "dest": "/src/pages/api/$1.ts"
-      }
+        {
+            "src": "/api/(.*)",
+            "dest": "/api/$1"
+        }
     ]
-  }
+}
