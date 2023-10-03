@@ -2,8 +2,7 @@ import Head from 'next/head'
 import { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import PromptInput from '../components/PromptInput';
-import Button from '@/components/Button';
+
 
 export default function Home() {
   const [companyName, setCompanyName] = useState('');
