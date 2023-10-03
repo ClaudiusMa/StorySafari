@@ -112,6 +112,8 @@ export default function Home() {
           new THREE.Vector3(-halfWidth, -halfHeight + textHeight / 2, -0.1),
           new THREE.Vector3(halfWidth, halfHeight + textHeight / 2, 0.1)
         );
+        // const boxHelper = new THREE.Box3Helper(worldChild.geometry.boundingBox);
+        // scene.add(boxHelper);
 
         return worldChild;
       });
@@ -229,7 +231,8 @@ export default function Home() {
 
       <div className='flex flex-row bg-black'>
         <div className=' flex flex-col w-1/4 ml-20 absolute self-center'>
-          <p className='text-3xl font-bold text-lightgrey'><span className='text-5xl'>S</span>torySafari</p>
+        {/* <img className='w-10 h-10 bg-white/10 rounded-3xl' src='/icon.png' /> */}
+          <p className=' mt-2 text-3xl font-bold text-lightgrey'><span className='text-5xl'>S</span>torySafari</p>
           <p className='mt-2 text-lg font-light text-lightgrey'>Discover dream company portfolios and craft compelling stories for your own</p>
           <div className='mt-5'>
             <div className='flex items-center p-2 w-full text-white bg-lightgrey/20 backdrop-blur-lg rounded-sm hover:bg-lightgrey/40'>
