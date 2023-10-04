@@ -260,8 +260,8 @@ return (
       <link rel="icon" href="/favicon.ico" />
     </Head>
 
-    <div className='flex flex-row bg-black'>
-      <div className=' flex flex-col w-1/4 ml-20 absolute self-center'>
+    <div className='flex flex-col md:flex-row bg-black '>
+      <div className=' flex flex-col py-10 w-4/5 mx-auto md:w-1/4 md:ml-20 absolute self-center'>
         {/* <img className='w-10 h-10 bg-white/10 rounded-3xl' src='/icon.png' /> */}
         <p className=' mt-2 text-3xl font-bold text-lightgrey'><span className='text-5xl'>S</span>torySafari</p>
         <p className='mt-2 text-lg font-light text-lightgrey'>Discover dream company portfolios and craft compelling stories for your own</p>
