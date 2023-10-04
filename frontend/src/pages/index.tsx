@@ -179,6 +179,7 @@ export default function Home() {
       requestAnimationFrame(render)
     }
     render() // Call the render function
+    fetchPortfolio('Apple');
     return () => {
       window.removeEventListener('click', onDocumentMouseClick, false);
       if (containerRef.current) {
@@ -186,6 +187,7 @@ export default function Home() {
       }
       renderer.dispose();
     };
+
   }, [])
 
   // Update sprites whenever names changes
