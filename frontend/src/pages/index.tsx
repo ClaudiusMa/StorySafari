@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 function fitTextToCanvas(canvas, context, text) {
-  let fontSize = 100; // Start with a large font size
+  let fontSize = 50; // Start with a large font size
   context.font = `${fontSize}px Arial`;
 
   // Reduce the font size until the text fits the canvas
@@ -226,8 +226,8 @@ useEffect(() => {
 
 function createSprite(name: string) {
   const canvas = document.createElement('canvas')
-  canvas.width = 200
-  canvas.height = 100
+  canvas.width = 300
+  canvas.height = 150
   const context = canvas.getContext('2d')
   if (context) {
     context.clearRect(0, 0, canvas.width, canvas.height)
@@ -236,7 +236,8 @@ function createSprite(name: string) {
     context.fillStyle = '#ffffff'
     context.textBaseline = 'middle'
     context.textAlign = 'start'
-    fitTextToCanvas(canvas, context, name) // Use the function here
+    const firstName = name ? name.split(' ')[0] : ''; // Check if name is not null or undefined before splitting
+    fitTextToCanvas(canvas, context, firstName) // Use the first name here
   }
 
   const texture = new THREE.CanvasTexture(canvas)
@@ -246,7 +247,7 @@ function createSprite(name: string) {
 
   const material = new THREE.SpriteMaterial({ map: texture })
   const sprite = new THREE.Sprite(material);
-  sprite.name = name; // set the name of the sprite
+  sprite.name = name; // set the full name of the sprite
   console.log("Sprite name:", name);
   return sprite;
 }
